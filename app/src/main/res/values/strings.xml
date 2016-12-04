@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Scouting Application</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_email">URL</string>
+    <string name="action_setup">Finish Setup</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_invalid_url">No "api/status.php" found at URL</string>
+    <string name="error_field_required">This field is required</string>
+</resources>
