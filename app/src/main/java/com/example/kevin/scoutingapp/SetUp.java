@@ -3,6 +3,7 @@ package com.example.kevin.scoutingapp;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -218,7 +219,7 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             showProgress(false);
 
             if (success) {
-                finish(); //TODO: change to new intent.
+                loadNewIntent();
             } else {
                 mSetupView.setError(getString(R.string.error_invalid_url));
                 mSetupView.requestFocus();
@@ -230,6 +231,11 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             mSetupTask = null;
             showProgress(false);
         }
+    }
+
+    public void loadNewIntent() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 }
 

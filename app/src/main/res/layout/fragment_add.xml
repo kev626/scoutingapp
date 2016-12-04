@@ -1,0 +1,191 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.kevin.scoutingapp.AddFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView" >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal|top">
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:text="Team Name"
+                android:ems="10"
+                android:id="@+id/name"
+                android:layout_gravity="center_horizontal" />
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:ems="10"
+                android:id="@+id/number"
+                android:layout_gravity="center_horizontal"
+                android:text="Team Number" />
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
+
+                <EditText
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/autobeacons"
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    android:text="Beacons" />
+
+                <EditText
+                    android:layout_width="144dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/autoparticlesfloor"
+                    android:layout_row="0"
+                    android:layout_column="1"
+                    android:text="Particles floor" />
+
+                <EditText
+                    android:layout_width="138dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/autoparticlesgoal"
+                    android:layout_row="0"
+                    android:layout_column="2"
+                    android:text="Particles goal" />
+            </GridLayout>
+
+            <RadioButton
+                android:layout_width="383dp"
+                android:layout_height="wrap_content"
+                android:text="Parked normally"
+                android:id="@+id/autopark1"
+                android:layout_gravity="center_horizontal"
+                android:checked="false" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Parked partially on ramp"
+                android:id="@+id/autopark2"
+                android:checked="false" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Parked fully on ramp"
+                android:id="@+id/autopark3"
+                android:checked="false" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Parked partially on center"
+                android:id="@+id/autopark4"
+                android:checked="false" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Parked fully on center"
+                android:id="@+id/autopark5"
+                android:checked="false" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/autocap"
+                android:checked="false"
+                android:text="Cap ball in contact with floor" />
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal" >
+
+                <EditText
+                    android:layout_width="88dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/telebeacons"
+                    android:layout_row="0"
+                    android:layout_column="0"
+                    android:text="Beacons" />
+
+                <EditText
+                    android:layout_width="144dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/teleparticlefloor"
+                    android:layout_row="0"
+                    android:layout_column="1"
+                    android:text="Particles floor" />
+
+                <EditText
+                    android:layout_width="138dp"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:ems="10"
+                    android:id="@+id/teleparticlegoal"
+                    android:layout_row="0"
+                    android:layout_column="2"
+                    android:text="Particles goal" />
+            </GridLayout>
+
+            <RadioButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ball normally"
+                android:id="@+id/teleball1"
+                android:checked="false" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ball slightly off floor"
+                android:id="@+id/teleball2"
+                android:checked="false" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ball > 30&quot; off floor"
+                android:id="@+id/teleball3"
+                android:checked="false" />
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ball capped"
+                android:id="@+id/teleball4"
+                android:checked="false" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/add_submit"
+                android:id="@+id/submit"
+                android:layout_gravity="center_horizontal|bottom" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</FrameLayout>

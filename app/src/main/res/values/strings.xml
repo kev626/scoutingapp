@@ -8,4 +8,8 @@
     <string name="error_invalid_url">No "api/status.php" found at URL</string>
     <string name="error_field_required">This field is required</string>
     <string name="permission">Permissions required!</string>
+    <string name="title_activity_main">Main</string>
+    <string name="action_main">Main</string>
+    <string name="section_format">Section: %1$d</string>
+    <string name="add_submit">Add team</string>
 </resources>
