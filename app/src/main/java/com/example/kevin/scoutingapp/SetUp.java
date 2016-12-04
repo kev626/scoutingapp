@@ -181,7 +181,6 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         protected Boolean doInBackground(Void... params) {
 
             try {
-                Thread.sleep(2000);
                 URL obj = new URL(url + "/api/status.php");
                 HttpURLConnection con = (HttpURLConnection) obj.openConnection();
                 con.setRequestMethod("GET");
