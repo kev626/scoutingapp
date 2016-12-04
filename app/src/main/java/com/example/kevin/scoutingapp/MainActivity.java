@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.Button;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -109,6 +110,13 @@ public class MainActivity extends AppCompatActivity {
                                  Bundle savedInstanceState) {
             if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
                 View rootView = inflater.inflate(R.layout.fragment_add, container, false);
+                Button button = (Button) rootView.findViewById(R.id.submit);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //TODO: Add logic to connect to server and update teams.
+                    }
+                });
                 return rootView;
             }
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);

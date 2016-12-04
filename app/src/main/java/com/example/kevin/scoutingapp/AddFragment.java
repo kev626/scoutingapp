@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 
 /**
@@ -45,9 +46,6 @@ public class AddFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-        }
     }
 
     @Override
@@ -57,9 +55,6 @@ public class AddFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_add, container, false);
     }
 
-    public void onButtonClick() {
-        
-    }
 
     @Override
     public void onAttach(Context context) {
