@@ -23,12 +23,16 @@ import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.Manifest.permission.PACKAGE_USAGE_STATS;
 import static android.Manifest.permission.READ_CONTACTS;
 
 /**
@@ -39,22 +43,11 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
     /**
      * Id to identity READ_CONTACTS permission request.
      */
-    private static final int REQUEST_READ_CONTACTS = 0;
 
-    /**
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello", "bar@example.com:world"
-    };
-    /**
-     * Keep track of the login task to ensure we can cancel it if requested.
-     */
     private SetupTask mSetupTask = null;
 
     // UI references.
-    private AutoCompleteTextView mSetupView;
+    private EditText mSetupView;
     private View mProgressView;
     private View mLoginFormView;
 
@@ -63,14 +56,15 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_up);
         // Set up the login form.
-        mSetupView = (AutoCompleteTextView) findViewById(R.id.URL);
-        populateAutoComplete();
+        mSetupView = (EditText) findViewById(R.id.URL);
 
         Button mEmailSignInButton = (Button) findViewById(R.id.setup);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                //attemptLogin();
+                SetupTask task = new SetupTask(mSetupView.getText().toString());
+                task.execute();
+                showProgress(true);
             }
         });
 
@@ -78,35 +72,6 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         mProgressView = findViewById(R.id.login_progress);
     }
 
-    private void populateAutoComplete() {
-        if (!mayRequestContacts()) {
-            return;
-        }
-
-        getLoaderManager().initLoader(0, null, this);
-    }
-
-    private boolean mayRequestContacts() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            return true;
-        }
-        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        }
-        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mSetupView, R.string.permission, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok, new View.OnClickListener() {
-                        @Override
-                        @TargetApi(Build.VERSION_CODES.M)
-                        public void onClick(View v) {
-                            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-                        }
-                    });
-        } else {
-            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
-        }
-        return false;
-    }
 
     /**
      * Callback received when a permissions request has been completed.
@@ -114,20 +79,8 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == REQUEST_READ_CONTACTS) {
-            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                populateAutoComplete();
-            }
-        }
+
     }
-
-
-    /**
-     * Attempts to sign in or register the account specified by the login form.
-     * If there are form errors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     */
-
 
     /**
      * Shows the progress UI and hides the login form.
@@ -191,21 +144,11 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             cursor.moveToNext();
         }
 
-        addEmailsToAutoComplete(emails);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
-    }
-
-    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
-        //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(SetUp.this,
-                        android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mSetupView.setAdapter(adapter);
     }
 
 
@@ -227,6 +170,8 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
 
         private final String url;
 
+        private boolean success;
+
         SetupTask(String url) {
             this.url = url;
         }
@@ -235,21 +180,36 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         protected Boolean doInBackground(Void... params) {
 
             try {
-                URL obj = new URL(url);
+                Thread.sleep(2000);
+                URL obj = new URL(url + "/api/status.php");
                 HttpURLConnection con = (HttpURLConnection) obj.openConnection();
                 con.setRequestMethod("GET");
 
                 int responseCode = con.getResponseCode();
 
-                if (responseCode != 200) {
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(con.getInputStream()));
+                String inputLine;
+                StringBuffer response = new StringBuffer();
+
+                while ((inputLine = in.readLine()) != null) {
+                    response.append(inputLine);
+                }
+                in.close();
+
+                if (response.toString().contains("*ok*")) {
+                    success = true;
+                    return true;
+                } else {
+                    success = false;
                     return false;
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
+                return false;
             }
 
-            return true;
         }
 
         @Override
@@ -258,7 +218,7 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             showProgress(false);
 
             if (success) {
-                finish();
+                finish(); //TODO: change to new intent.
             } else {
                 mSetupView.setError(getString(R.string.error_invalid_url));
                 mSetupView.requestFocus();
