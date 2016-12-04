@@ -18,17 +18,14 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,11 +51,10 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
     /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
-    private UserLoginTask mAuthTask = null;
+    private SetupTask mSetupTask = null;
 
     // UI references.
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
+    private AutoCompleteTextView mSetupView;
     private View mProgressView;
     private View mLoginFormView;
 
@@ -67,7 +63,7 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_set_up);
         // Set up the login form.
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.URL);
+        mSetupView = (AutoCompleteTextView) findViewById(R.id.URL);
         populateAutoComplete();
 
         Button mEmailSignInButton = (Button) findViewById(R.id.setup);
@@ -98,7 +94,7 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
             return true;
         }
         if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
-            Snackbar.make(mEmailView, R.string.permission_rationale, Snackbar.LENGTH_INDEFINITE)
+            Snackbar.make(mSetupView, R.string.permission, Snackbar.LENGTH_INDEFINITE)
                     .setAction(android.R.string.ok, new View.OnClickListener() {
                         @Override
                         @TargetApi(Build.VERSION_CODES.M)
@@ -209,7 +205,7 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
                 new ArrayAdapter<>(SetUp.this,
                         android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
-        mEmailView.setAdapter(adapter);
+        mSetupView.setAdapter(adapter);
     }
 
 
@@ -227,55 +223,51 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    public class SetupTask extends AsyncTask<Void, Void, Boolean> {
 
-        private final String mEmail;
-        private final String mPassword;
+        private final String url;
 
-        UserLoginTask(String email, String password) {
-            mEmail = email;
-            mPassword = password;
+        SetupTask(String url) {
+            this.url = url;
         }
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            // TODO: attempt authentication against a network service.
 
             try {
-                // Simulate network access.
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                return false;
-            }
+                URL obj = new URL(url);
+                HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+                con.setRequestMethod("GET");
 
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Account exists, return true if the password matches.
-                    return pieces[1].equals(mPassword);
+                int responseCode = con.getResponseCode();
+
+                if (responseCode != 200) {
+                    return false;
                 }
+
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            // TODO: register the new account here.
             return true;
         }
 
         @Override
         protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
+            mSetupTask = null;
             showProgress(false);
 
             if (success) {
                 finish();
             } else {
-                mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                mSetupView.setError(getString(R.string.error_invalid_url));
+                mSetupView.requestFocus();
             }
         }
 
         @Override
         protected void onCancelled() {
-            mAuthTask = null;
+            mSetupTask = null;
             showProgress(false);
         }
     }
