@@ -18,7 +18,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -109,12 +116,52 @@ public class MainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             if (getArguments().getInt(ARG_SECTION_NUMBER) == 1) {
-                View rootView = inflater.inflate(R.layout.fragment_add, container, false);
+                final View rootView = inflater.inflate(R.layout.fragment_add, container, false);
                 Button button = (Button) rootView.findViewById(R.id.submit);
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //TODO: Add logic to connect to server and update teams.
+                        try {
+                            URL obj = new URL(Globals.URL + "/api/addTeam.php");
+                            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+                            con.setRequestMethod("POST");
+
+                            String params = "";
+                            params += "?number=" + ((EditText)rootView.findViewById(R.id.number)).getText();
+                            params += "&name=" + ((EditText)rootView.findViewById(R.id.name)).getText();
+                            params += "&autobeacons=" + ((EditText)rootView.findViewById(R.id.autobeacons)).getText();
+                            params += "&autoparticlefloor=" + ((EditText)rootView.findViewById(R.id.autoparticlesfloor)).getText();
+                            params += "&autoparticlegoal=" + ((EditText)rootView.findViewById(R.id.autoparticlesgoal)).getText();
+                            params += "&teleparticlesgoal=" + ((EditText)rootView.findViewById(R.id.teleparticlegoal)).getText();
+                            //TODO: Continue adding according to API
+
+                            con.setDoOutput(true);
+                            OutputStream os = con.getOutputStream();
+                            os.write(params.getBytes());
+                            os.flush();
+                            os.close();
+
+                            int responseCode = con.getResponseCode();
+                            System.out.println("POST Response Code :: " + responseCode);
+
+                            if (responseCode == HttpURLConnection.HTTP_OK) { //success
+                                BufferedReader in = new BufferedReader(new InputStreamReader(
+                                        con.getInputStream()));
+                                String inputLine;
+                                StringBuffer response = new StringBuffer();
+
+                                while ((inputLine = in.readLine()) != null) {
+                                    response.append(inputLine);
+                                }
+                                in.close();
+
+                                System.out.println(response.toString());
+                            } else {
+                                System.out.println("POST request not worked");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
                 return rootView;

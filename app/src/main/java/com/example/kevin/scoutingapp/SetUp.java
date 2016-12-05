@@ -199,6 +199,7 @@ public class SetUp extends AppCompatActivity implements LoaderCallbacks<Cursor> 
 
                 if (response.toString().contains("*ok*")) {
                     success = true;
+                    Globals.URL = url;
                     return true;
                 } else {
                     success = false;
