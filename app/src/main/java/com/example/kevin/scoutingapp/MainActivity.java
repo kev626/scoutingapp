@@ -1,5 +1,6 @@
 package com.example.kevin.scoutingapp;
 
+import android.provider.MediaStore;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -18,7 +19,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -121,47 +125,65 @@ public class MainActivity extends AppCompatActivity {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        try {
-                            URL obj = new URL(Globals.URL + "/api/addTeam.php");
-                            HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-                            con.setRequestMethod("POST");
 
-                            String params = "";
-                            params += "?number=" + ((EditText)rootView.findViewById(R.id.number)).getText();
-                            params += "&name=" + ((EditText)rootView.findViewById(R.id.name)).getText();
-                            params += "&autobeacons=" + ((EditText)rootView.findViewById(R.id.autobeacons)).getText();
-                            params += "&autoparticlefloor=" + ((EditText)rootView.findViewById(R.id.autoparticlesfloor)).getText();
-                            params += "&autoparticlegoal=" + ((EditText)rootView.findViewById(R.id.autoparticlesgoal)).getText();
-                            params += "&teleparticlesgoal=" + ((EditText)rootView.findViewById(R.id.teleparticlegoal)).getText();
-                            //TODO: Continue adding according to API
+                        String params = "";
+                        params += "?number=" + ((EditText) rootView.findViewById(R.id.number)).getText();
+                        params += "&teamName=" + ((EditText) rootView.findViewById(R.id.name)).getText();
+                        params += "&autobeacons=" + ((EditText) rootView.findViewById(R.id.autobeacons)).getText();
+                        params += "&autoparticlefloor=" + ((EditText) rootView.findViewById(R.id.autoparticlesfloor)).getText();
+                        params += "&autoparticlegoal=" + ((EditText) rootView.findViewById(R.id.autoparticlesgoal)).getText();
+                        params += "&teleparticlesgoal=" + ((EditText) rootView.findViewById(R.id.teleparticlegoal)).getText();
+                        params += "&teleparticlesfloor=" + ((EditText) rootView.findViewById(R.id.teleparticlefloor)).getText();
+                        params += "&telebeacons=" + ((EditText) rootView.findViewById(R.id.telebeacons)).getText();
 
-                            con.setDoOutput(true);
-                            OutputStream os = con.getOutputStream();
-                            os.write(params.getBytes());
-                            os.flush();
-                            os.close();
+                        boolean autopark1 = ((RadioButton) rootView.findViewById(R.id.autopark1)).isChecked();
+                        boolean autopark2 = ((RadioButton) rootView.findViewById(R.id.autopark2)).isChecked();
+                        boolean autopark3 = ((RadioButton) rootView.findViewById(R.id.autopark3)).isChecked();
+                        boolean autopark4 = ((RadioButton) rootView.findViewById(R.id.autopark4)).isChecked();
+                        boolean autopark5 = ((RadioButton) rootView.findViewById(R.id.autopark5)).isChecked();
 
-                            int responseCode = con.getResponseCode();
-                            System.out.println("POST Response Code :: " + responseCode);
-
-                            if (responseCode == HttpURLConnection.HTTP_OK) { //success
-                                BufferedReader in = new BufferedReader(new InputStreamReader(
-                                        con.getInputStream()));
-                                String inputLine;
-                                StringBuffer response = new StringBuffer();
-
-                                while ((inputLine = in.readLine()) != null) {
-                                    response.append(inputLine);
-                                }
-                                in.close();
-
-                                System.out.println(response.toString());
-                            } else {
-                                System.out.println("POST request not worked");
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        int autopark = 0;
+                        if (autopark1) {
+                            autopark = 0;
+                        } else if (autopark2) {
+                            autopark = 5;
+                        } else if (autopark3) {
+                            autopark = 10;
+                        } else if (autopark4) {
+                            autopark = 5;
+                        } else if (autopark5) {
+                            autopark = 10;
                         }
+
+                        params += "&autopark=" + autopark;
+
+
+                        params += "&autocap=" + (((CheckBox) rootView.findViewById(R.id.autocap)).isChecked() ? 5 : 0);
+
+                        boolean teleball1 = ((RadioButton) rootView.findViewById(R.id.teleball1)).isChecked();
+                        boolean teleball2 = ((RadioButton) rootView.findViewById(R.id.teleball2)).isChecked();
+                        boolean teleball3 = ((RadioButton) rootView.findViewById(R.id.teleball3)).isChecked();
+                        boolean teleball4 = ((RadioButton) rootView.findViewById(R.id.teleball4)).isChecked();
+
+                        int teleball = 0;
+                        if (teleball1) {
+                            teleball = 0;
+                        }
+                        if (teleball2) {
+                            teleball = 10;
+                        }
+                        if (teleball3) {
+                            teleball = 20;
+                        }
+                        if (teleball4) {
+                            teleball = 40;
+                        }
+
+                        params += "&teleball=" + teleball;
+
+
+                        Thread t = new Thread(new SubmitThread(params));
+                        t.start();
                     }
                 });
                 return rootView;
