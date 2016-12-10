@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
                         String params = "";
-                        params += "?number=" + ((EditText) rootView.findViewById(R.id.number)).getText();
+                        params += "number=" + ((EditText) rootView.findViewById(R.id.number)).getText();
                         params += "&teamName=" + ((EditText) rootView.findViewById(R.id.name)).getText();
                         params += "&autobeacons=" + ((EditText) rootView.findViewById(R.id.autobeacons)).getText();
                         params += "&autoparticlefloor=" + ((EditText) rootView.findViewById(R.id.autoparticlesfloor)).getText();
@@ -183,6 +183,30 @@ public class MainActivity extends AppCompatActivity {
 
 
                         Thread t = new Thread(new SubmitThread(params));
+                        t.start();
+                    }
+                });
+                return rootView;
+            } else if (getArguments().getInt(ARG_SECTION_NUMBER) == 4) {
+                final View rootView = inflater.inflate(R.layout.fragment_match_add, container, false);
+                Button button = (Button) rootView.findViewById(R.id.submit);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        System.out.println(((EditText) rootView.findViewById(R.id.match)).getText());
+
+                        String params  = "";
+                        params += "match=" + ((EditText) rootView.findViewById(R.id.match)).getText();
+                        params += "&red1=" + ((EditText) rootView.findViewById(R.id.red1)).getText();
+                        params += "&red2=" + ((EditText) rootView.findViewById(R.id.red2)).getText();
+                        params += "&blue1=" + ((EditText) rootView.findViewById(R.id.blue1)).getText();
+                        params += "&blue2=" + ((EditText) rootView.findViewById(R.id.blue2)).getText();
+                        params += "&redScore=" + ((EditText) rootView.findViewById(R.id.redscore)).getText();
+                        params += "&blueScore=" + ((EditText) rootView.findViewById(R.id.bluescore)).getText();
+                        params += "&comments=" + ((EditText) rootView.findViewById(R.id.comments)).getText();
+
+                        Thread t = new Thread(new MatchAddThread(params));
                         t.start();
                     }
                 });
